@@ -47,7 +47,7 @@ const Movies = () => {
           {isOpen1 && (
             <ul className="list">
               {stateMovie.movies?.map((movie) => (
-                <li key={movie.imdbID}>
+                <li key={movie.imdbID} style={{ cursor:'pointer' }} onClick={() => dispatchMovie({type: "change", propertId:"movieId", value:movie.imdbID})}>
                   <img src={movie.Poster} alt={`${movie.Title} poster`} />
                   <h3>{movie.Title}</h3>
                   <div>

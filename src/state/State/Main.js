@@ -27,4 +27,6 @@ export const mainState = {
     error: "",
     isLoading: false,
     watchedMovies: [...tempWatchedData],
+    movieId: "",
+    movie: {},
 }
