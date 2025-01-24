@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { StoreContextUsePopcorn } from '../../App';
 import { Rating } from '@mui/material';
+import useKey from '../../useKey';
 
 const key = "f84fc31d"
 
@@ -8,12 +9,14 @@ const Details = ({  }) => {
 
   const { stateMovie, dispatchMovie } = useContext(StoreContextUsePopcorn);
   const [ rating, setRating ] = useState(5);
-  
+  const [ isWatched, setIsWatched ] = useState(false);
 
+  
   const getMovieDetail = async () => {
     try {
       dispatchMovie({type: "change", propertId:"isLoading", value:true});
       dispatchMovie({type: "change", propertId:"error", value:""});
+      
 
       const res = await fetch(`http://www.omdbapi.com/?apikey=${key}&i=${stateMovie.movieId}`);
       if(!res.ok) throw Error("Something went wrong with fetching movie detail")
@@ -34,6 +37,22 @@ const Details = ({  }) => {
   useEffect(() => {
     getMovieDetail()
   },[stateMovie.movieId]);
+
+  useKey("Escape", () => dispatchMovie({type: "change", propertId:"movieId", value:""}));
+
+  const addHandler = () => {
+    const {
+      imdbID,
+      Title,
+      Year,
+      Poster,
+      Runtime: runtime,
+      imdbRating,
+      userRating: rating,
+    } = stateMovie.movie;
+    dispatchMovie({type: "add", value: { imdbID, Title, Year, Poster, runtime, imdbRating, rating }});
+    setIsWatched(stateMovie.watchedMovies.some(movie => movie.imdbID === stateMovie.movie.imdbID));
+  }
 
   return (
     <div className='details'>
@@ -58,9 +77,13 @@ const Details = ({  }) => {
             <Rating name="rating" defaultValue={5} max={10} onChange={(event, newValue) => setRating(newValue)} />
               {rating}
           </div>
-          <button className='btn-add' onClick={() => dispatchMovie({type: "add"})}>
+          {
+            !isWatched &&
+          <button className='btn-add' onClick={() => addHandler()}>
             + Add to list
           </button>
+          }
+         
         </div>
         <p>
           <em>{stateMovie.movie.Plot}</em>
