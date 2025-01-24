@@ -31,8 +31,9 @@ import Details from "./components/Watched/Details";
             {isOpen2 && (
               <>
                 <Summary />
-                <WatchedList />
-                <Details />
+                {
+                  stateMovie.movieId ? <Details /> : <WatchedList />
+                }
               </>
             )}
           </div>
